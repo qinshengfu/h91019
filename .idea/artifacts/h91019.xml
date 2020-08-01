@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="h91019">
+    <output-path>$PROJECT_DIR$/out/artifacts/h91019</output-path>
+    <root id="archive" name="h91019.war">
+      <element id="artifact" artifact-name="h91019:Web" />
+    </root>
+  </artifact>
+</component>

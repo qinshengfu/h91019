@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="MemberMapper">
+	
+	<!--表名 -->
+	<sql id="tableName">
+		"SET_MEMBER"
+	</sql>
+	
+	<!-- 字段 -->
+	<sql id="Field">
+		"NAME",	
+		"PHONE",	
+		"PWD",	
+		"REFERRER",	
+		"R_PATH",	
+		"R_LEVEL",	
+		"AVATAR",	
+		"MEM_LEVEL",	
+		"LEVEL_NUM",	
+		"COMMISSION",	
+		"INTEGRAL",	
+		"WEALTH",	
+		"DIRECTPUSH",	
+		"CONSUMPTION",	
+		"UPGRADE",	
+		"OUTMONEY",	
+		"CONTACT",	
+		"C_PATH",	
+		"C_LEVEL",	
+		"PLACE",	
+		"LEFT",	
+		"RIGHT",
+		"AREA",	
+		"ONETIME",	
+		"TIME",	
+		"CHECKIN",
+		"YEJI",
+		"YEJINEWS",
+		"MEMBER",
+		"GIFT",
+		"YJ",
+		"JF",
+		"CF",
+		"TXMONEY",
+		"MEMBER_ID"
+	</sql>
+	
+	<!-- 字段值 -->
+	<sql id="FieldValue">
+			#{NAME},	
+			#{PHONE},	
+			#{PWD},	
+			#{REFERRER},	
+			#{R_PATH},	
+			#{R_LEVEL},	
+			#{AVATAR},	
+			#{MEM_LEVEL},	
+			#{LEVEL_NUM},	
+			#{COMMISSION},	
+			#{INTEGRAL},	
+			#{WEALTH},	
+			#{DIRECTPUSH},	
+			#{CONSUMPTION},	
+			#{UPGRADE},	
+			#{OUTMONEY},	
+			#{CONTACT},	
+			#{C_PATH},	
+			#{C_LEVEL},	
+			#{PLACE},	
+			#{LEFT},	
+			#{RIGHT},
+			#{AREA},	
+			#{ONETIME},	
+			#{TIME},	
+			'no',
+			0,
+			0,
+			#{MEMBER},
+			0,
+			0,
+			#{JF},
+			0,
+			0,
+			#{MEMBER_ID}
+	</sql>
+
+	<!-- 获取接点人 -->
+	<select id="getContact" parameterType="pd" resultType="pd">
+		select
+		<include refid="Field"></include>
+		from
+		<include refid="tableName"></include>
+		where "MEMBER" in 
+		(
+			<foreach collection="array" item="item" open="" separator="," close="">
+				&apos;${item}&apos;
+			</foreach>
+		)
+		and "MEM_LEVEL" != '普通' 
+		add ("LEFT" = '0' or "RIGHT" = '0')
+		order by C_LEVEL desc
+	</select>
+
+	<!-- 获取团队总业绩和总人数和新增业绩 -->
+	<select id="getTeam" parameterType="pd" resultType="pd">
+		select sum(YEJI) as TDYJ,count(MEMBER) as TDRS,sum(YEJINEWS) as TDXYJ
+		from
+		<include refid="tableName"></include>
+		where
+			"C_PATH" like CONCAT(#{C_PATH},'%')
+		and "C_LEVEL" &lt;= #{C_LEVEL}
+	</select>
+
+	<!-- 获取市场总业绩和总人数 -->
+	<select id="getMarket" parameterType="pd" resultType="pd">
+		select sum(YEJI) as SCYJ,count(MEMBER) as SCRS
+		from
+		<include refid="tableName"></include>
+	</select>
+
+	<!-- 找出 7 层接点关系 -->
+	<select id="listCommunity1" parameterType="pd" resultType="pd">
+		select * from "SET_MEMBER"
+		where "C_LEVEL" &lt; #{level}
+		start with "MEMBER" = #{MEMBER}
+		connect by prior "MEMBER" = "CONTACT"
+	</select>
+	
+	<!-- 根据接点人获取数据 -->
+	<select id="listContact" parameterType="pd" resultType="pd">
+		select
+		<include refid="Field"></include>
+		from 
+		<include refid="tableName"></include>
+		where "CONTACT" = #{CONTACT}
+		order by AREA
+	</select>
+
+	<!-- 修改签到 -->
+	<update id="editCheckin" parameterType="pd">
+		update 
+		<include refid="tableName"></include>
+		set
+			"CHECKIN" = 'no',
+			"YEJINEWS" = 0
+	</update>
+
+	<!-- 获取所有接点上级 -->
+	<select id="allSuperior" parameterType="pd" resultType="pd">
+		select
+		<include refid="Field"></include>
+		from
+		<include refid="tableName"></include>
+		where "MEMBER" in 
+		(
+			<foreach collection="array" item="item" open="" separator="," close="">
+				&apos;${item}&apos;
+			</foreach>
+		)
+		and "MEM_LEVEL" != '普通' 
+		order by C_LEVEL desc
+	</select>
+
+	<!-- 找出 多代推荐关系 -->
+	<select id="listTree" parameterType="pd" resultType="pd">
+		select * from "SET_MEMBER"
+		where "R_LEVEL" &lt; #{level}
+		start with "MEMBER" = #{MEMBER}
+		connect by prior "MEMBER" = "REFERRER"
+	</select>
+	
+	<!-- 根据推荐人获取数据 -->
+	<select id="listReferrer" parameterType="pd" resultType="pd">
+		select
+		<include refid="Field"></include>
+		from 
+		<include refid="tableName"></include>
+		where "REFERRER" = #{REFERRER}
+		order by TIME
+	</select>
+
+	<!-- 修改积分 -->
+	<update id="editIntegral" parameterType="pd">
+		update
+		<include refid="tableName"></include>
+			set 
+			"INTEGRAL" = "INTEGRAL" + #{INTEGRAL},
+			"MEMBER_ID" = "MEMBER_ID"
+			where 
+				"MEMBER" = #{MEMBER}
+	</update>
+
+	<!-- 修改佣金 -->
+	<update id="editCommission" parameterType="pd">
+		update
+		<include refid="tableName"></include>
+			set 
+			"COMMISSION" = "COMMISSION" + #{COMMISSION},
+			"TXMONEY" = "TXMONEY" + #{TXMONEY},
+			"MEMBER_ID" = "MEMBER_ID"
+			where 
+				"MEMBER" = #{MEMBER}
+	</update>
+
+	<!-- 修改密码 -->
+	<update id="editPwd" parameterType="pd">
+		update
+		<include refid="tableName"></include>
+			set 
+			"PWD" = #{PWD},
+			"MEMBER_ID" = "MEMBER_ID"
+			where 
+				"MEMBER_ID" = #{MEMBER_ID}
+	</update>
+
+	<!-- 小公排找接点人 -->
+	<select id="contactPath" parameterType="String" resultType="pd">
+		select
+		<include refid="Field"></include>
+		from (
+			select
+			<include refid="Field"></include>
+			from
+			<include refid="tableName"></include>
+			where "C_PATH" like CONCAT(#{C_PATH},'%') and ("LEFT" = '0' or "RIGHT" = '0') 
+			order by PLACE
+		) where rownum=1
+	</select>
+
+	<!-- 通过推荐码获取数据 -->
+	<select id="findByReferrer" parameterType="pd" resultType="pd">
+		select 
+		<include refid="Field"></include>
+		from 
+		<include refid="tableName"></include>
+		where 
+			"MEMBER" = #{REFERRER}
+	</select>
+	
+	<!-- 通过账号获取数据 -->
+	<select id="findByMember" parameterType="pd" resultType="pd">
+		select 
+		<include refid="Field"></include>
+		from 
+		<include refid="tableName"></include>
+		where 
+			"MEMBER" = #{MEMBER}
+	</select>
+	
+	<!-- 通过账号和密码获取数据 -->
+	<select id="findByMemberAndPwd" parameterType="pd" resultType="pd">
+		select 
+		<include refid="Field"></include>
+		from 
+		<include refid="tableName"></include>
+		where 
+			"MEMBER" = #{MEMBER}
+		and
+			"PWD" = #{PWD}
+	</select>
+	
+	<!-- 新增-->
+	<insert id="save" parameterType="pd">
+		insert into
+		<include refid="tableName"></include>
+		(
+		<include refid="Field"></include>
+		) values (
+		<include refid="FieldValue"></include>
+		)
+	</insert>
+	
+	<!-- 删除-->
+	<delete id="delete" parameterType="pd">
+		delete from
+		<include refid="tableName"></include>
+		where 
+			"MEMBER_ID" = #{MEMBER_ID}
+	</delete>
+	
+	<!-- 修改 -->
+	<update id="edit" parameterType="pd">
+		update
+		<include refid="tableName"></include>
+			set 
+			<if test="LEFT != null and LEFT != ''">
+				"LEFT" = #{LEFT},	
+			</if>
+			<if test="RIGHT != null and RIGHT != ''">
+				"RIGHT" = #{RIGHT},	
+			</if>	
+			<if test="DIRECTPUSH != null">
+				"DIRECTPUSH" = #{DIRECTPUSH},
+			</if>
+			<if test="COMMISSION != null">
+				"COMMISSION" = #{COMMISSION},
+			</if>
+			<if test="INTEGRAL != null">
+				"INTEGRAL" = #{INTEGRAL},
+			</if>
+			<if test="CONSUMPTION != null">
+				"CONSUMPTION" = #{CONSUMPTION},
+			</if>
+			<if test="MEM_LEVEL != null">
+				"MEM_LEVEL" = #{MEM_LEVEL},
+			</if>
+			<if test="LEVEL_NUM != null">
+				"LEVEL_NUM" = #{LEVEL_NUM},
+			</if>
+			<if test="ONETIME != null">
+				"ONETIME" = #{ONETIME},
+			</if>
+			<if test="OUTMONEY != null">
+				"OUTMONEY" = #{OUTMONEY},
+			</if>
+			<if test="UPGRADE != null">
+				"UPGRADE" = #{UPGRADE},
+			</if>
+			<if test="AVATAR != null">
+				"AVATAR" = #{AVATAR},
+			</if>
+			<if test="CHECKIN != null">
+				"CHECKIN" = #{CHECKIN},
+			</if>
+			<if test="WEALTH != null">
+				"WEALTH" = #{WEALTH},
+			</if>
+			<if test="YEJI != null">
+				"YEJI" = #{YEJI},
+			</if>
+			<if test="YEJINEWS != null">
+				"YEJINEWS" = #{YEJINEWS},
+			</if>
+			<if test="CONTACT != null">
+				"CONTACT" = #{CONTACT},
+			</if>
+			<if test="C_PATH != null">
+				"C_PATH" = #{C_PATH},
+			</if>
+			<if test="C_LEVEL != null">
+				"C_LEVEL" = #{C_LEVEL},
+			</if>
+			<if test="PLACE != null">
+				"PLACE" = #{PLACE},
+			</if>
+			<if test="AREA != null">
+				"AREA" = #{AREA},
+			</if>
+			<if test="GIFT != null">
+				"GIFT" = #{GIFT},
+			</if>
+			<if test="YJ != null">
+				"YJ" = #{YJ},
+			</if>
+			<if test="JF != null">
+				"JF" = #{JF},
+			</if>
+			<if test="CF != null">
+				"CF" = #{CF},
+			</if>
+			<if test="TXMONEY != null">
+				"TXMONEY" = #{TXMONEY},
+			</if>
+			"MEMBER_ID" = "MEMBER_ID"
+			where 
+				"MEMBER_ID" = #{MEMBER_ID}
+	</update>
+	
+	<!-- 通过ID获取数据 -->
+	<select id="findById" parameterType="pd" resultType="pd">
+		select 
+		<include refid="Field"></include>
+		from 
+		<include refid="tableName"></include>
+		where 
+			"MEMBER_ID" = #{MEMBER_ID}
+	</select>
+	
+	<!-- 列表 -->
+	<select id="datalistPage" parameterType="page" resultType="pd">
+		select
+		<include refid="Field"></include>
+		from 
+		<include refid="tableName"></include>
+		where 1=1
+		<if test="pd.keywords!= null and pd.keywords != ''"><!-- 关键词检索 -->
+			and
+				(
+					"MEMBER" = #{pd.keywords}
+				)
+		</if>
+	</select>
+	
+	<!-- 列表(全部) -->
+	<select id="listAll" parameterType="pd" resultType="pd">
+		select
+		<include refid="Field"></include>
+		from 
+		<include refid="tableName"></include>
+	</select>
+	
+	<!-- 批量删除 -->
+	<delete id="deleteAll" parameterType="String">
+		delete from
+		<include refid="tableName"></include>
+		where 
+			"MEMBER_ID" in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                 #{item}
+		</foreach>
+	</delete>
+	
+	<!-- fh313596790qq(青苔) -->
+</mapper>

@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="AccuntMapper">
+	<resultMap type="Accunt" id="AccuntResultMap">
+		<id column="ACCUNT_ID" property="ACCUNT_ID"/>
+		<result column="SERIAL" property="SERIAL"/>
+		<result column="INVESTMENT" property="INVESTMENT"/>
+		<result column="EARNINGS" property="EARNINGS"/>
+		<result column="ETH" property="ETH"/>
+		<result column="BTC" property="BTC"/>
+		<result column="BALIC" property="BALIC"/>
+		<result column="EVERYDAY" property="EVERYDAY"/>
+		<result column="TEAM_BENEFIT" property="TEAM_BENEFIT"/>
+		<result column="PERSONAL_BENEFITS" property="PERSONAL_BENEFITS"/>
+		<result column="LOCK_PRICE" property="LOCK_PRICE"/>
+		<result column="SUPERIOR_F" property="SUPERIOR_F"/>
+		<result column="DAILY_STATUS" property="DAILY_STATUS"/>
+		<result column="MONTHLY" property="MONTHLY"/>
+		<result column="MONTHLY_STATUS" property="MONTHLY_STATUS"/>
+		<result column="REGISTER_TIME" property="REGISTER_TIME"/>
+	</resultMap>
+	
+	<!--表名 -->
+	<sql id="tableName">
+		"TB_ACCUNT"
+	</sql>
+	
+	<!-- 字段 -->
+	<sql id="Field">
+		"SERIAL",	
+		"INVESTMENT",	
+		"EARNINGS",	
+		"ETH",	
+		"BTC",	
+		"BALIC",	
+		"EVERYDAY",	
+		"TEAM_BENEFIT",	
+		"PERSONAL_BENEFITS",	
+		"ACCUNT_ID",
+		"LOCK_PRICE",
+		"SUPERIOR_F",
+		"DAILY_STATUS",
+		"MONTHLY",
+		"MONTHLY_STATUS",
+		"REGISTER_TIME"
+	</sql>
+	
+	<!-- 字段值 -->
+	<sql id="FieldValue">
+			#{SERIAL},	
+			#{INVESTMENT},	
+			#{EARNINGS},	
+			#{ETH},	
+			#{BTC},	
+			#{BALIC},	
+			#{EVERYDAY},	
+			#{TEAM_BENEFIT},	
+			#{PERSONAL_BENEFITS},	
+			#{ACCUNT_ID},
+			#{LOCK_PRICE},
+			#{SUPERIOR_F},
+			#{DAILY_STATUS},
+			#{MONTHLY},
+			#{MONTHLY_STATUS},
+			#{REGISTER_TIME}
+	</sql>
+	
+	<!-- 新增-->
+	<insert id="save" parameterType="pd">
+		insert into
+		<include refid="tableName"></include>
+		(
+		<include refid="Field"></include>
+		) values (
+		<include refid="FieldValue"></include>
+		)
+	</insert>
+	
+	<!-- 删除-->
+	<delete id="delete" parameterType="pd">
+		delete from
+		<include refid="tableName"></include>
+		where 
+			"ACCUNT_ID" = #{ACCUNT_ID}
+	</delete>
+	
+	<!-- 修改 -->
+	<update id="edit" parameterType="pd">
+		update
+		<include refid="tableName"></include>
+			set 
+			<if test="INVESTMENT != null and INVESTMENT != ''">
+			 		"INVESTMENT" = #{INVESTMENT},	
+			</if>
+			<if test="EARNINGS != null and EARNINGS != ''">
+			 		"EARNINGS" = #{EARNINGS},	
+			</if>
+			<if test="ETH != null and ETH != ''">
+			 		"ETH" = #{ETH},	
+			</if>														
+			<if test="BTC != null and BTC != ''">
+			 		"BTC" = #{BTC},	
+			</if>					
+			<if test="BALIC != null and BALIC != ''">
+			 		"BALIC" = #{BALIC},	
+			</if>
+			<if test="EVERYDAY != null and EVERYDAY != ''">
+			 		"EVERYDAY" = #{EVERYDAY},	
+			</if>
+			<if test="TEAM_BENEFIT != null and TEAM_BENEFIT != ''">
+			 		"TEAM_BENEFIT" = #{TEAM_BENEFIT},	
+			</if>
+			<if test="PERSONAL_BENEFITS != null and PERSONAL_BENEFITS != ''">
+			 		"PERSONAL_BENEFITS" = #{PERSONAL_BENEFITS},	
+			</if>
+			<if test="LOCK_PRICE != null and LOCK_PRICE != ''">
+			 		"LOCK_PRICE" = #{LOCK_PRICE},	
+			</if>
+			<if test="DAILY_STATUS != null and DAILY_STATUS != ''">
+			 		"DAILY_STATUS" = #{DAILY_STATUS},	
+			</if>
+			<if test="MONTHLY != null and MONTHLY != ''">
+			 		"MONTHLY" = #{MONTHLY},	
+			</if>
+			<if test="MONTHLY_STATUS != null and MONTHLY_STATUS != ''">
+			 		"MONTHLY_STATUS" = #{MONTHLY_STATUS},	
+			</if>
+			"ACCUNT_ID" = "ACCUNT_ID"
+			where 
+				1 = 1
+			<if test="ACCUNT_ID != null and ACCUNT_ID != ''">
+				and	"ACCUNT_ID" = #{ACCUNT_ID}
+			</if>
+			<if test="SERIAL != null and SERIAL != ''">
+				and	"SERIAL" = #{SERIAL}
+			</if>
+	</update>
+	
+	<!-- 充值-->
+	<update id="recharge" parameterType="pd">
+		update
+		<include refid="tableName"></include>
+			set 
+			<if test="INVESTMENT != null and INVESTMENT != ''">
+			 		"INVESTMENT" = "INVESTMENT"+#{INVESTMENT},	
+			</if>
+			<if test="EARNINGS != null and EARNINGS != ''">
+			 		"EARNINGS" = "EARNINGS"+#{EARNINGS},	
+			</if>
+			<if test="ETH != null and ETH != ''">
+			 		"ETH" = "ETH"+#{ETH},	
+			</if>														
+			<if test="BTC != null and BTC != ''">
+			 		"BTC" = "BTC"+#{BTC},	
+			</if>						
+			<if test="BALIC != null and BALIC != ''">
+			 		"BALIC" = "BALIC"+#{BALIC},	
+			</if>
+			<if test="EVERYDAY != null and EVERYDAY != ''">
+			 		"EVERYDAY" = "EVERYDAY"+#{EVERYDAY},	
+			</if>
+			<if test="TEAM_BENEFIT != null and TEAM_BENEFIT != ''">
+			 		"TEAM_BENEFIT" = "TEAM_BENEFIT"+#{TEAM_BENEFIT},	
+			</if>
+			<if test="PERSONAL_BENEFITS != null and PERSONAL_BENEFITS != ''">
+			 		"PERSONAL_BENEFITS" = "PERSONAL_BENEFITS"+#{PERSONAL_BENEFITS},	
+			</if>
+			<if test="LOCK_PRICE != null and LOCK_PRICE != ''">
+			 		"LOCK_PRICE" = "LOCK_PRICE"+#{LOCK_PRICE},	
+			</if>
+			<if test="DAILY_STATUS != null and DAILY_STATUS != ''">
+			 		"DAILY_STATUS" = "DAILY_STATUS"+#{DAILY_STATUS},	
+			</if>
+			<if test="MONTHLY != null and MONTHLY != ''">
+			 		"MONTHLY" = "MONTHLY"+#{MONTHLY},	
+			</if>
+			<if test="MONTHLY_STATUS != null and MONTHLY_STATUS != ''">
+			 		"MONTHLY_STATUS" = "MONTHLY_STATUS"+#{MONTHLY_STATUS},	
+			</if>
+			"ACCUNT_ID" = "ACCUNT_ID"
+			where 
+				1 = 1 
+			<if test="ACCUNT_ID != null and ACCUNT_ID != ''">
+				and	"ACCUNT_ID" = #{ACCUNT_ID}
+			</if>
+			<if test="SERIAL != null and SERIAL != ''">
+				and	"SERIAL" = #{SERIAL}
+			</if>
+	</update>
+	
+	<!-- 扣款 -->
+	<update id="deduction" parameterType="pd">
+		update
+		<include refid="tableName"></include>
+			set 
+			<if test="INVESTMENT != null and INVESTMENT != ''">
+			 		"INVESTMENT" = "INVESTMENT"-#{INVESTMENT},	
+			</if>
+			<if test="EARNINGS != null and EARNINGS != ''">
+			 		"EARNINGS" = "EARNINGS"-#{EARNINGS},	
+			</if>
+			<if test="ETH != null and ETH != ''">
+			 		"ETH" = "ETH"-#{ETH},	
+			</if>														
+			<if test="BTC != null and BTC != ''">
+			 		"BTC" = "BTC"-#{BTC},	
+			</if>						
+			<if test="BALIC != null and BALIC != ''">
+			 		"BALIC" = "BALIC"-#{BALIC},	
+			</if>
+			<if test="EVERYDAY != null and EVERYDAY != ''">
+			 		"EVERYDAY" = "EVERYDAY"-#{EVERYDAY},	
+			</if>
+			<if test="TEAM_BENEFIT != null and TEAM_BENEFIT != ''">
+			 		"TEAM_BENEFIT" = "TEAM_BENEFIT"-#{TEAM_BENEFIT},	
+			</if>
+			<if test="PERSONAL_BENEFITS != null and PERSONAL_BENEFITS != ''">
+			 		"PERSONAL_BENEFITS" = "PERSONAL_BENEFITS"-#{PERSONAL_BENEFITS},	
+			</if>
+			<if test="LOCK_PRICE != null and LOCK_PRICE != ''">
+			 		"LOCK_PRICE" = "LOCK_PRICE"-#{LOCK_PRICE},	
+			</if>
+			<if test="DAILY_STATUS != null and DAILY_STATUS != ''">
+			 		"DAILY_STATUS" = "DAILY_STATUS"-#{DAILY_STATUS},	
+			</if>
+			<if test="MONTHLY != null and MONTHLY != ''">
+			 		"MONTHLY" = "MONTHLY"-#{MONTHLY},	
+			</if>
+			<if test="MONTHLY_STATUS != null and MONTHLY_STATUS != ''">
+			 		"MONTHLY_STATUS" = "MONTHLY_STATUS"-#{MONTHLY_STATUS},	
+			</if>
+			"ACCUNT_ID" = "ACCUNT_ID"
+			where 
+				1 = 1 
+			<if test="ACCUNT_ID != null and ACCUNT_ID != ''">
+				and	"ACCUNT_ID" = #{ACCUNT_ID}
+			</if>
+			<if test="SERIAL != null and SERIAL != ''">
+				and	"SERIAL" = #{SERIAL}
+			</if>
+	</update>
+	<!-- 通过ID获取数据 -->
+	<select id="findById" parameterType="pd" resultType="pd">
+		select 
+		<include refid="Field"></include>
+		from 
+		<include refid="tableName"></include>
+		where 
+			"ACCUNT_ID" = #{ACCUNT_ID}
+	</select>
+	
+	<!-- 通过会员账号获取数据 -->
+	<select id="getSERIAL" parameterType="String" resultMap="AccuntResultMap">
+		select 
+		<include refid="Field"></include>
+		from 
+		<include refid="tableName"></include>
+		where "ACCUNT_ID" = #{ACCUNT_ID} or "SERIAL" = #{SERIAL}
+	</select>
+	
+	<!-- 列表 -->
+	<select id="datalistPage" parameterType="page" resultType="pd">
+		select
+		<include refid="Field"></include>
+		from 
+		<include refid="tableName"></include>
+		where 1=1
+		<if test="pd.keywords!= null and pd.keywords != ''"><!-- 关键词检索 -->
+			and
+				(				
+					SERIAL LIKE CONCAT(CONCAT('%', #{pd.keywords}),'%')
+									
+				)
+		</if>
+		order by REGISTER_TIME desc
+	</select>
+	
+	<!-- 列表(全部) -->
+	<select id="listAll" parameterType="pd" resultType="pd">
+		select
+		<include refid="Field"></include>
+		from 
+		<include refid="tableName"></include>
+	</select>
+	
+	<!-- 批量删除 -->
+	<delete id="deleteAll" parameterType="String">
+		delete from
+		<include refid="tableName"></include>
+		where 
+			"ACCUNT_ID" in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                 #{item}
+		</foreach>
+	</delete>
+	
+		<!-- 增加会员团队投单量 -->
+	<update id="increase" parameterType="pd">
+		update
+		<include refid="tableName"></include>
+			set 
+			 	"INVESTMENT" = "INVESTMENT"+#{INVESTMENT}
+			where 
+				"SERIAL" in (${SERIAL})
+	</update>
+	
+		<!-- 减少会员团队投单量 -->
+	<update id="reduce" parameterType="pd">
+		update
+		<include refid="tableName"></include>
+			set 
+			 	"INVESTMENT" = "INVESTMENT"-#{INVESTMENT}	
+			where 
+				"SERIAL" in (${SERIAL})
+	</update>
+	
+		<!-- 增加会员直推投单量 -->
+	<update id="increase_zt" parameterType="pd">
+		update
+		<include refid="tableName"></include>
+			set 
+			 	"EARNINGS" = "EARNINGS"+#{EARNINGS}
+			where 
+				"SERIAL" = #{SERIAL}
+	</update>
+	
+		<!-- 减少会员直推投单量 -->
+	<update id="reduce_zt" parameterType="pd">
+		update
+		<include refid="tableName"></include>
+			set 
+			 	"EARNINGS" = "EARNINGS"-#{EARNINGS}
+			where 
+				"SERIAL" = #{SERIAL}
+	</update>
+	<!-- 每日个人收益清零、修改领取状态 -->
+	<update id="zero_clearing" parameterType="pd">
+		update
+		<include refid="tableName"></include>
+			set 
+	 			"DAILY_STATUS" = 0,	
+			<if test="MONTHLY_STATUS != null and MONTHLY_STATUS != ''">
+			 		"MONTHLY_STATUS" = 0,	
+			</if>
+			 "EVERYDAY" = 0
+		
+	</update>
+	<select id="activation_state" parameterType="String" resultType="java.lang.Integer">
+		select count(*) from SYS_MEMBERS t where t.activation_state=1 and t.superior=#{superior}
+	</select>
+</mapper>

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="OrderMapper">
+	
+	<!--表名 -->
+	<sql id="tableName">
+		"REC_ORDER"
+	</sql>
+	
+	<!-- 字段 -->
+	<sql id="Field">
+		"ORDERNUM",	
+		"NAME",	
+		"PRICE",	
+		"IMGPATH",	
+		"QUANTITY",	
+		"TOTAL",	
+		"RECIPIENT",	
+		"PHONE",	
+		"ADDRESS",	
+		"DETAILEDADD",	
+		"STATE",	
+		"ORDERTIME",	
+		"PAYMENTTIME",	
+		"DELIVERYTIME",	
+		"RECEIPTTIME",	
+		"MEMBER_ID",
+		"SOURCE",
+		"PRODUCT_ID",
+		"ORDER_ID"
+	</sql>
+	
+	<!-- 字段值 -->
+	<sql id="FieldValue">
+			#{ORDERNUM},	
+			#{NAME},	
+			#{PRICE},	
+			#{IMGPATH},	
+			#{QUANTITY},	
+			#{TOTAL},	
+			#{RECIPIENT},	
+			#{PHONE},	
+			#{ADDRESS},	
+			#{DETAILEDADD},	
+			#{STATE},	
+			#{ORDERTIME},	
+			#{PAYMENTTIME},	
+			#{DELIVERYTIME},	
+			#{RECEIPTTIME},	
+			#{MEMBER_ID},
+			#{SOURCE},
+			#{PRODUCT_ID},
+			#{ORDER_ID}
+	</sql>
+	
+	<!-- 新增-->
+	<insert id="save" parameterType="pd">
+		insert into
+		<include refid="tableName"></include>
+		(
+		<include refid="Field"></include>
+		) values (
+		<include refid="FieldValue"></include>
+		)
+	</insert>
+	
+	<!-- 删除-->
+	<delete id="delete" parameterType="pd">
+		delete from
+		<include refid="tableName"></include>
+		where 
+			"ORDER_ID" = #{ORDER_ID}
+	</delete>
+	
+	<!-- 修改 -->
+	<update id="edit" parameterType="pd">
+		update
+		<include refid="tableName"></include>
+			set 
+				"ORDERNUM" = #{ORDERNUM},	
+				"NAME" = #{NAME},	
+				"PRICE" = #{PRICE},	
+				"IMGPATH" = #{IMGPATH},	
+				"QUANTITY" = #{QUANTITY},	
+				"TOTAL" = #{TOTAL},	
+				"RECIPIENT" = #{RECIPIENT},	
+				"PHONE" = #{PHONE},	
+				"ADDRESS" = #{ADDRESS},	
+				"DETAILEDADD" = #{DETAILEDADD},	
+				"STATE" = #{STATE},	
+				"ORDERTIME" = #{ORDERTIME},	
+				"PAYMENTTIME" = #{PAYMENTTIME},	
+				<if test="DELIVERYTIME != null and DELIVERYTIME != ''">
+					"DELIVERYTIME" = #{DELIVERYTIME},	
+				</if>
+				<if test="RECEIPTTIME != null and RECEIPTTIME != ''">
+					"RECEIPTTIME" = #{RECEIPTTIME},	
+				</if>
+			"ORDER_ID" = "ORDER_ID"
+			where 
+				"ORDER_ID" = #{ORDER_ID}
+	</update>
+	
+	<!-- 通过ID获取数据 -->
+	<select id="findById" parameterType="pd" resultType="pd">
+		select 
+		<include refid="Field"></include>
+		from 
+		<include refid="tableName"></include>
+		where 
+			"ORDER_ID" = #{ORDER_ID}
+	</select>
+	
+	<!-- 列表 -->
+	<select id="datalistPage" parameterType="page" resultType="pd">
+		select
+		<include refid="Field"></include>
+		from 
+		<include refid="tableName"></include>
+		where 1=1
+		<if test="pd.keywords!= null and pd.keywords != ''"><!-- 关键词检索 -->
+			and
+				(
+				<!--	根据需求自己加检索条件
+					字段1 LIKE CONCAT(CONCAT('%', #{pd.keywords}),'%')
+					 or 
+					字段2 LIKE CONCAT(CONCAT('%', #{pd.keywords}),'%') 
+				-->
+				)
+		</if>
+		order by ORDERTIME desc
+	</select>
+	
+	<!-- 列表(全部) -->
+	<select id="listAll" parameterType="pd" resultType="pd">
+		select
+		<include refid="Field"></include>
+		from 
+		<include refid="tableName"></include>
+		<if test="PHONE != null and PHONE != ''">
+			where "MEMBER_ID" = #{MEMBER_ID}
+		</if>
+		<!-- <if test="STATE != null and STATE != ''">
+			and "STATE" = #{STATE}
+		</if> -->
+		order by ORDERTIME desc
+	</select>
+	
+	<!-- 批量删除 -->
+	<delete id="deleteAll" parameterType="String">
+		delete from
+		<include refid="tableName"></include>
+		where 
+			"ORDER_ID" in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                 #{item}
+		</foreach>
+	</delete>
+	
+	<!-- fh313596790qq(青苔) -->
+</mapper>
